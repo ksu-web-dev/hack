@@ -1,12 +1,7 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io.connect('http://localhost:8080');
-    /*socket.on('newplayer', function (data) {
-        console.log(data);
-        socket.emit('other event', { test: 'hi, im player: ' + data.player_id});
-    });*/
     socket.emit('newPlayer');
-    //socket.emit('getPlayers');
     socket.on('currentPlayers', function (data) {
         console.log(data);
     });
