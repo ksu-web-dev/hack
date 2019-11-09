@@ -1,8 +1,8 @@
-import { Message } from '../game/message';
+import { Message, deserialize } from '../game/message';
 import { World } from '../game/world';
 import { Tile } from '../game/tile';
 import uuid from 'uuid/v4';
-import { Action, ConnectAction } from '../game/action';
+import { Action, ConnectAction, UpdateWorld } from '../game/action';
 
 
 declare const io: typeof import('socket.io');
@@ -24,36 +24,16 @@ function pxs(val: number) {
   return val.toString() + 'px';
 }
 
-let chars = ['&#8283;', '&#8483;', '&#775;', '&#803;', '&#856;']
+let chars = ['&#8283;', '&#8483;', '&#775;', '&#803;', '&#856;'];
 
 function renderWorld(w: World, x: number, y: number) {
-  let width = 50; 
-  let height = 50;
-  let tiles = [];
-  for (let i = 0; i < width; i++) {
-    tiles[i] = [];
-    for (let j = 0; j < height; j++) {
-      tiles[i][j] = new Tile();
-      // tiles[i][j].character = '.';
-      //tiles[i][j].character = '@';
-      // add 85 to what you think it is
-      //tiles[i][j].character = '&#261;';
-      //tiles[i][j].character = '&#8492;';
-      //tiles[i][j].character = '&#8483;';
-      tiles[i][j].character = chars[Math.floor((Math.random() * 5))];
-    }
-  }
-  let world = new World(tiles);
-  w = world;
-  
+
   let body = document.getElementsByTagName('body')[0];
-  console.log(body);
-  console.log(tiles);
 
   // Create a div to contain the world
   let worldDiv = document.createElement("div");
-  worldDiv.style.width = pxs(15 * tiles[0].length);
-  worldDiv.style.height = pxs(15 * tiles.length);
+  worldDiv.style.width = pxs(15 * w.tiles[0].length);
+  worldDiv.style.height = pxs(15 * w.tiles.length);
   worldDiv.style.position = "relative";
   worldDiv.style.margin = "auto";
 
@@ -74,7 +54,7 @@ function renderWorld(w: World, x: number, y: number) {
       elementDiv.style.height = pxs(15);//'15px'; 
       elementDiv.style.width = pxs(15);//'15px';
 
-      elementDiv.innerHTML = tiles[i][j].character;
+      elementDiv.innerHTML = w.tiles[i][j].character;
       elementDiv.style.textAlign = "center";
       elementDiv.style.userSelect = "none";
 
@@ -92,5 +72,15 @@ var socket = io('http://localhost:8080');
 
 send(new ConnectAction(token));
 
-renderWorld(null, 0, 0);
-//renderWorld(null, window.innerWidth / 2, window.innerHeight / 2);
+//renderWorld(null, 0, 0);
+
+let world = new World();
+
+socket.on('message', buffer => {
+  console.log(`Received a message on client: ${buffer}`);
+  const msg = deserialize(buffer);
+  world = msg.body.update(world);
+  //msg.body = new UpdateWorld(world);
+  console.log(world);
+  renderWorld(world, 0, 0);
+});
