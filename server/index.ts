@@ -13,11 +13,14 @@ const app = express();
 const server = new Server(app);
 const io = socketio(server);
 
+// Characters for generating ascii forest
+let chars = ['&#8283;', '&#8483;', '&#775;', '&#803;', '&#856;'];
+
 let tiles = [];
 for (var i = 0; i < WORLD_SIZE; i++) {
   tiles[i] = [];
   for (var j = 0; j < WORLD_SIZE; j++) {
-    tiles[j] = new Tile('.');
+    tiles[j] = new Tile(chars[Math.floor((Math.random() * 5))]);
   }
 }
 
@@ -43,10 +46,6 @@ function log(msg: string) {
   console.log(`[${chalk.gray(time)}] ${msg}`);
 }
 
-function reply(s: socketio.Socket, msg: Message) {
-  s.emit('message', msg.serialize());
-}
-
 io.on('connection', function(socket) {
   log(`A user connected on socket: ${socket.id}`);
 
@@ -57,6 +56,7 @@ io.on('connection', function(socket) {
     msg.body = new UpdateWorld(world);
 
     socket.emit('message', msg.serialize());
+    socket.broadcast.emit('message', msg.serialize());
   });
 
   socket.on('disconnect', function() {

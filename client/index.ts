@@ -1,8 +1,8 @@
-import { Message } from '../game/message';
+import { Message, deserialize } from '../game/message';
 import { World } from '../game/world';
 import { Tile } from '../game/tile';
 import uuid from 'uuid/v4';
-import { Action, ConnectAction } from '../game/action';
+import { Action, ConnectAction, UpdateWorld } from '../game/action';
 
 
 declare const io: typeof import('socket.io');
@@ -24,7 +24,10 @@ function pxs(val: number) {
   return val.toString() + 'px';
 }
 
+let chars = ['&#8283;', '&#8483;', '&#775;', '&#803;', '&#856;'];
+
 function renderWorld(w: World, x: number, y: number) {
+<<<<<<< HEAD
   let width = 10;
   let height = 10;
   let tiles = [];
@@ -38,16 +41,26 @@ function renderWorld(w: World, x: number, y: number) {
   }
   let world = new World(tiles);
   w = world;
+=======
+>>>>>>> 7d1557271447cee7051a591a6230bcbbf6c4ee6e
 
   let body = document.getElementsByTagName('body')[0];
-  console.log(body);
-  console.log(tiles);
 
   // Create a div to contain the world
   let worldDiv = document.createElement("div");
+<<<<<<< HEAD
   worldDiv.style.width = pxs(15 * tiles[0].length);
   worldDiv.style.height = pxs(15 * tiles.length);
 
+=======
+  worldDiv.style.width = pxs(15 * w.tiles[0].length);
+  worldDiv.style.height = pxs(15 * w.tiles.length);
+  worldDiv.style.position = "relative";
+  worldDiv.style.margin = "auto";
+
+  //worldDiv.style.left = pxs(x);
+  //worldDiv.style.top = pxs(y);
+>>>>>>> 7d1557271447cee7051a591a6230bcbbf6c4ee6e
 
   // Start creating a div for each row and then each cell of the row
   for (let i = 0; i < w.tiles.length; i++) {
@@ -63,9 +76,10 @@ function renderWorld(w: World, x: number, y: number) {
       elementDiv.style.height = pxs(15);//'15px';
       elementDiv.style.width = pxs(15);//'15px';
 
-      elementDiv.innerHTML = tiles[i][j].character;
+      elementDiv.innerHTML = w.tiles[i][j].character;
       elementDiv.style.textAlign = "center";
-      // add more styles to center the character in the div...
+      elementDiv.style.userSelect = "none";
+
       rowDiv.appendChild(elementDiv);
     }
     worldDiv.appendChild(rowDiv);
@@ -155,7 +169,7 @@ function checkCollision() //<- pass in player coordinates?
 
   //see what tiles around player are not passable.
   //set Allowedmovement to false if any direction is not allowed.
-  
+
   return allowedMovement;
 }
 
