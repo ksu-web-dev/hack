@@ -1,5 +1,5 @@
 import { World } from './world';
-import { Action } from './action';
+import { Action, Actions, ConnectAction, UpdateWorld } from './action';
 
 export class Message {
   id: string;
@@ -16,4 +16,20 @@ export class Message {
       body: this.body.serialize()
     });
   }
+}
+
+export function deserialize(buffer: string): Message {
+  const { id, body } = JSON.parse(buffer);
+  let action;
+
+  switch (JSON.parse(body).action) {
+    case Actions.Connect:
+      action = new ConnectAction(body.token);
+      break;
+    case Actions.UpdateWorld:
+      action = new UpdateWorld(body.world);
+      break;
+  }
+
+  return new Message(id, action);
 }
