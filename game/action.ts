@@ -34,18 +34,27 @@ export class ConnectAction implements Action {
 export class UpdateWorld implements Action {
   public world: World;
 
-  constructor(tiles: World) {
-    this.world = tiles;
+  constructor(world: World) {
+    this.world = world;
   }
 
   public update(w: World): World {
-    return w;
+    return this.world;
   }
 
   public serialize(): string {
+    let players = [];
+
+    for (var i = 0; i < this.world.players.length; i++) {
+      players[i] = {
+        x: this.world.players[i],
+        y: this.world.players[i]
+      };
+    }
+
     return JSON.stringify({
-      actions: Actions.UpdateWorld,
-      world: this.world
+      action: Actions.UpdateWorld,
+      world: { tiles: this.world.tiles, players: players }
     });
   }
 }

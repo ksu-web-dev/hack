@@ -20,7 +20,7 @@ let tiles = [];
 for (var i = 0; i < WORLD_SIZE; i++) {
   tiles[i] = [];
   for (var j = 0; j < WORLD_SIZE; j++) {
-    tiles[j] = new Tile(chars[Math.floor((Math.random() * 5))]);
+    tiles[j] = new Tile(chars[Math.floor(Math.random() * 5)]);
   }
 }
 
@@ -53,6 +53,7 @@ io.on('connection', function(socket) {
     log(`Received a message: ${buffer}`);
     const msg = deserialize(buffer);
     world = msg.body.update(world);
+
     msg.body = new UpdateWorld(world);
 
     socket.emit('message', msg.serialize());

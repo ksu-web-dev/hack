@@ -19,10 +19,12 @@ export class Message {
 }
 
 export function deserialize(buffer: string): Message {
-  const { id, body } = JSON.parse(buffer);
+  let { id, body } = JSON.parse(buffer);
   let action;
 
-  switch (JSON.parse(body).action) {
+  body = JSON.parse(body);
+
+  switch (body.action) {
     case Actions.Connect:
       action = new ConnectAction(body.token);
       break;
