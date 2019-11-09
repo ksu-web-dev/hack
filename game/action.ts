@@ -19,4 +19,6 @@ export class ConnectAction implements Action {
   public serialize(): string {
     return JSON.stringify({ token: this.token });
   }
+
+  
 }

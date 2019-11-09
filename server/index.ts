@@ -32,6 +32,7 @@ io.on('connection', function(socket) {
     delete players[socket.id];
     socket.broadcast.emit('currentPlayers', players);
   });
+
 });
 
 log('Server is now listening on port 8080');

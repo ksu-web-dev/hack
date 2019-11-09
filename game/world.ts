@@ -6,4 +6,6 @@ export class World {
   constructor(tiles: Tile[][]) {
     this.tiles = tiles
   }
+  
+
 }
