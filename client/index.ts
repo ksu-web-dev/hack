@@ -24,16 +24,23 @@ function pxs(val: number) {
   return val.toString() + 'px';
 }
 
+let chars = ['&#8283;', '&#8483;', '&#775;', '&#803;', '&#856;']
+
 function renderWorld(w: World, x: number, y: number) {
-  let width = 10;
-  let height = 10;
+  let width = 50; 
+  let height = 50;
   let tiles = [];
   for (let i = 0; i < width; i++) {
     tiles[i] = [];
     for (let j = 0; j < height; j++) {
       tiles[i][j] = new Tile();
-      //tiles[i][j].character = '.';
-      tiles[i][j].character = '@';
+      // tiles[i][j].character = '.';
+      //tiles[i][j].character = '@';
+      // add 85 to what you think it is
+      //tiles[i][j].character = '&#261;';
+      //tiles[i][j].character = '&#8492;';
+      //tiles[i][j].character = '&#8483;';
+      tiles[i][j].character = chars[Math.floor((Math.random() * 5))];
     }
   }
   let world = new World(tiles);
@@ -47,7 +54,11 @@ function renderWorld(w: World, x: number, y: number) {
   let worldDiv = document.createElement("div");
   worldDiv.style.width = pxs(15 * tiles[0].length);
   worldDiv.style.height = pxs(15 * tiles.length);
-  
+  worldDiv.style.position = "relative";
+  worldDiv.style.margin = "auto";
+
+  //worldDiv.style.left = pxs(x);
+  //worldDiv.style.top = pxs(y);
 
   // Start creating a div for each row and then each cell of the row
   for (let i = 0; i < w.tiles.length; i++) {
@@ -65,7 +76,8 @@ function renderWorld(w: World, x: number, y: number) {
 
       elementDiv.innerHTML = tiles[i][j].character;
       elementDiv.style.textAlign = "center";
-      // add more styles to center the character in the div...
+      elementDiv.style.userSelect = "none";
+
       rowDiv.appendChild(elementDiv);
     }
     worldDiv.appendChild(rowDiv);
@@ -81,3 +93,4 @@ var socket = io('http://localhost:8080');
 send(new ConnectAction(token));
 
 renderWorld(null, 0, 0);
+//renderWorld(null, window.innerWidth / 2, window.innerHeight / 2);
