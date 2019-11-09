@@ -106,7 +106,7 @@ eval("\nvar __importDefault = (this && this.__importDefault) || function (mod) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar ConnectAction = /** @class */ (function () {\n    function ConnectAction(token) {\n        this.token = token;\n    }\n    ConnectAction.prototype.update = function (w) {\n        return w;\n    };\n    ConnectAction.prototype.serialize = function () {\n        return JSON.stringify({ token: this.token });\n    };\n    return ConnectAction;\n}());\nexports.ConnectAction = ConnectAction;\n\n\n//# sourceURL=webpack:///./game/action.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar world_1 = __webpack_require__(/*! ./world */ \"./game/world.ts\");\nvar Actions;\n(function (Actions) {\n    Actions[Actions[\"Connect\"] = 0] = \"Connect\";\n    Actions[Actions[\"UpdateWorld\"] = 1] = \"UpdateWorld\";\n})(Actions = exports.Actions || (exports.Actions = {}));\nvar ConnectAction = /** @class */ (function () {\n    function ConnectAction(token) {\n        this.token = token;\n    }\n    ConnectAction.prototype.update = function (w) {\n        if (w.players[this.token] == null) {\n            w.players[this.token] = new world_1.Location(0, 0);\n        }\n        return w;\n    };\n    ConnectAction.prototype.serialize = function () {\n        return JSON.stringify({ action: Actions.Connect, token: this.token });\n    };\n    return ConnectAction;\n}());\nexports.ConnectAction = ConnectAction;\nvar UpdateWorld = /** @class */ (function () {\n    function UpdateWorld(tiles) {\n        this.world = tiles;\n    }\n    UpdateWorld.prototype.update = function (w) {\n        return w;\n    };\n    UpdateWorld.prototype.serialize = function () {\n        return JSON.stringify({\n            actions: Actions.UpdateWorld,\n            world: this.world\n        });\n    };\n    return UpdateWorld;\n}());\nexports.UpdateWorld = UpdateWorld;\n\n\n//# sourceURL=webpack:///./game/action.ts?");
 
 /***/ }),
 
@@ -118,7 +118,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Co
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Message = /** @class */ (function () {\n    function Message(id, action) {\n        this.id = id;\n        this.body = action;\n    }\n    Message.prototype.serialize = function () {\n        return JSON.stringify({\n            id: this.id,\n            body: this.body.serialize()\n        });\n    };\n    return Message;\n}());\nexports.Message = Message;\n\n\n//# sourceURL=webpack:///./game/message.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar action_1 = __webpack_require__(/*! ./action */ \"./game/action.ts\");\nvar Message = /** @class */ (function () {\n    function Message(id, action) {\n        this.id = id;\n        this.body = action;\n    }\n    Message.prototype.serialize = function () {\n        return JSON.stringify({\n            id: this.id,\n            body: this.body.serialize()\n        });\n    };\n    return Message;\n}());\nexports.Message = Message;\nfunction deserialize(buffer) {\n    var _a = JSON.parse(buffer), id = _a.id, body = _a.body;\n    var action;\n    switch (JSON.parse(body).action) {\n        case action_1.Actions.Connect:\n            action = new action_1.ConnectAction(body.token);\n            break;\n        case action_1.Actions.UpdateWorld:\n            action = new action_1.UpdateWorld(body.world);\n            break;\n    }\n    return new Message(id, action);\n}\nexports.deserialize = deserialize;\n\n\n//# sourceURL=webpack:///./game/message.ts?");
 
 /***/ }),
 
@@ -130,7 +130,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Me
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Tile = /** @class */ (function () {\n    function Tile() {\n    }\n    return Tile;\n}());\nexports.Tile = Tile;\n\n\n//# sourceURL=webpack:///./game/tile.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Tile = /** @class */ (function () {\n    function Tile(character) {\n        this.character = character;\n    }\n    return Tile;\n}());\nexports.Tile = Tile;\n\n\n//# sourceURL=webpack:///./game/tile.ts?");
 
 /***/ }),
 
@@ -142,7 +142,7 @@ eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Ti
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar World = /** @class */ (function () {\n    function World(tiles) {\n        this.tiles = tiles;\n    }\n    return World;\n}());\nexports.World = World;\n\n\n//# sourceURL=webpack:///./game/world.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Location = /** @class */ (function () {\n    function Location(x, y) {\n        this.x = x;\n        this.y = y;\n    }\n    return Location;\n}());\nexports.Location = Location;\nvar World = /** @class */ (function () {\n    function World(tiles) {\n        if (tiles) {\n            this.tiles = tiles;\n        }\n        this.players = [];\n    }\n    return World;\n}());\nexports.World = World;\n\n\n//# sourceURL=webpack:///./game/world.ts?");
 
 /***/ }),
 
