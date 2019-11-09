@@ -43,10 +43,6 @@ function log(msg: string) {
   console.log(`[${chalk.gray(time)}] ${msg}`);
 }
 
-function reply(s: socketio.Socket, msg: Message) {
-  s.emit('message', msg.serialize());
-}
-
 io.on('connection', function(socket) {
   log(`A user connected on socket: ${socket.id}`);
 
@@ -56,7 +52,7 @@ io.on('connection', function(socket) {
     world = msg.body.update(world);
     msg.body = new UpdateWorld(world);
 
-    socket.emit('message', msg.serialize());
+    socket.broadcast.emit('message', msg.serialize());
   });
 
   socket.on('disconnect', function() {
