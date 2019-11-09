@@ -155,7 +155,7 @@ function checkCollision() //<- pass in player coordinates?
 
   //see what tiles around player are not passable.
   //set Allowedmovement to false if any direction is not allowed.
-  
+
   return allowedMovement;
 }
 
