@@ -3,13 +3,25 @@ import socketio from 'socket.io';
 import chalk from 'chalk';
 import { Server } from 'http';
 import { World } from '../game/world';
-import { Message } from '../game/message';
+import { Message, deserialize } from '../game/message';
+import { Actions, UpdateWorld, ConnectAction } from '../game/action';
+import { Tile } from '../game/tile';
+
+const WORLD_SIZE = 1000;
 
 const app = express();
 const server = new Server(app);
 const io = socketio(server);
 
-let players = {};
+let tiles = [];
+for (var i = 0; i < WORLD_SIZE; i++) {
+  tiles[i] = [];
+  for (var j = 0; j < WORLD_SIZE; j++) {
+    tiles[j] = new Tile('.');
+  }
+}
+
+let world = new World(tiles);
 
 app.use(express.static('./static'));
 
@@ -19,24 +31,6 @@ if (process.env.NODE_ENV == 'development') {
     next();
   });
 }
-
-io.on('connection', function(socket) {
-  log(`A user connected on socket: ${socket.id}`);
-
-  socket.on('message', buffer => {
-    log(`Received a message: ${buffer}`);
-  });
-
-  socket.on('disconnect', function() {
-    console.log('user disconnected');
-    delete players[socket.id];
-    socket.broadcast.emit('currentPlayers', players);
-  });
-});
-
-log('Server is now listening on port 8080');
-
-server.listen(8080);
 
 function log(msg: string) {
   const time = new Date().toLocaleString('en-US', {
@@ -48,3 +42,24 @@ function log(msg: string) {
 
   console.log(`[${chalk.gray(time)}] ${msg}`);
 }
+
+io.on('connection', function(socket) {
+  log(`A user connected on socket: ${socket.id}`);
+
+  socket.on('message', buffer => {
+    log(`Received a message: ${buffer}`);
+    const msg = deserialize(buffer);
+    world = msg.body.update(world);
+    msg.body = new UpdateWorld(world);
+
+    socket.broadcast.emit('message', msg.serialize());
+  });
+
+  socket.on('disconnect', function() {
+    log('User disconnected');
+  });
+});
+
+log('Server is now listening on port 8080');
+
+server.listen(8080);
